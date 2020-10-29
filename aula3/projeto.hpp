@@ -121,10 +121,8 @@ class SERVER {
     }
 
     void sendBytes(int nBytesToSend, BYTE *buf){
-        printf("ESTOU NO SEND BYTES DO SERVER");
         int totalSentBytes = 0;
         while (totalSentBytes < nBytesToSend) {
-            printf("ESTOU NO WHILE DO SEND BYTES DO SERVER");
             int sentBytes = send(new_fd, buf, nBytesToSend, 0);
             if (sentBytes==-1) {
                 perror("sendBytes error"); 
@@ -146,6 +144,17 @@ class SERVER {
             totalReceivedBytes += receivedBytes;
             buf += receivedBytes;
         }
+    }
+
+    void sendUint(uint32_t m){
+        static uint32_t n;
+        n=htonl(m);
+        sendBytes(4, (BYTE*)&n);
+    }
+
+    void receiveUint(uint32_t& m) {
+        receiveBytes(4,(BYTE*)&m);
+        m=ntohl(m);
     }
 };
 
@@ -232,5 +241,16 @@ class CLIENT {
             totalReceivedBytes += receivedBytes;
             buf += receivedBytes;
         }
+    }
+    
+    void sendUint(uint32_t m){
+        static uint32_t n;
+        n=htonl(m);
+        sendBytes(4, (BYTE*)&n);
+    }
+
+    void receiveUint(uint32_t& m) {
+        receiveBytes(4,(BYTE*)&m);
+        m=ntohl(m);
     }
 };
