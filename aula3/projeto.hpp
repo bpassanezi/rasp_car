@@ -28,6 +28,13 @@ bool testaBytes(BYTE* buf, BYTE b,int n){
     return igual;
 }
 
+bool testaVb(const vector<BYTE> vb, BYTE b) {
+  //Testa se todos os bytes de vb possuem valor b
+  bool igual=true;
+  for (unsigned i=0; i<vb.size(); i++)
+    if (vb[i]!=b) { igual=false; break; }
+  return igual;
+}
 
 class SERVER {
     int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
@@ -156,6 +163,22 @@ class SERVER {
         receiveBytes(4,(BYTE*)&m);
         m=ntohl(m);
     }
+
+    void sendVb(const vector<BYTE>& vb){
+        // envio o tamanho do vetor antes
+        sendUint(vb.size());
+        // envio o endereco do vetor depois
+        sendBytes(vb.size(), (BYTE*)vb.data());
+    }
+
+    void receiveVb(vector<BYTE>& st){
+        // recebo o tamanho do vetor
+        uint32_t tamanho;
+        receiveUint(tamanho);
+
+        st.resize(tamanho);
+        receiveBytes(st.size(), (BYTE*)st.data());
+    }
 };
 
 
@@ -252,5 +275,21 @@ class CLIENT {
     void receiveUint(uint32_t& m) {
         receiveBytes(4,(BYTE*)&m);
         m=ntohl(m);
+    }
+
+    void sendVb(const vector<BYTE>& vb){
+        // envio o tamanho do vetor antes
+        sendUint(vb.size());
+        // envio o endereco do vetor depois
+        sendBytes(vb.size(), (BYTE*)vb.data());
+    }
+
+    void receiveVb(vector<BYTE>& st){
+        // recebo o tamanho do vetor
+        uint32_t tamanho;
+        receiveUint(tamanho);
+
+        st.resize(tamanho);
+        receiveBytes(st.size(), (BYTE*)st.data());
     }
 };
