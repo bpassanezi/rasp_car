@@ -204,6 +204,20 @@ class SERVER {
         // recebe os dados da imagem
         receiveBytes(3*img.total(), img.data);
     }
+
+    void sendImgComp(const Mat_<COR>& img) {
+        if (!img.isContinuous()) erro("sendImgComp Error: img.isContinuous() false");
+        vector<BYTE> vb;
+        vector<int> param{CV_IMWRITE_JPEG_QUALITY,80};
+        imencode(".jpg",img,vb,param);
+        sendVb(vb);
+    }
+
+    void receiveImgComp(Mat_<COR>& img) {
+        vector<BYTE> vb;
+        receiveVb(vb);
+        img=imdecode(vb, 1);
+    }
 };
 
 
@@ -341,5 +355,19 @@ class CLIENT {
         img.create(nl,nc);
         // recebe os dados da imagem
         receiveBytes(3*img.total(), img.data);
+    }
+
+    void sendImgComp(const Mat_<COR>& img) {
+        if (!img.isContinuous()) erro("sendImgComp Error: img.isContinuous() false");
+        vector<BYTE> vb;
+        vector<int> param{CV_IMWRITE_JPEG_QUALITY,80};
+        imencode(".jpg",img,vb,param);
+        sendVb(vb);
+    }
+
+    void receiveImgComp(Mat_<COR>& img) {
+        vector<BYTE> vb;
+        receiveVb(vb);
+        img=imdecode(vb, 1);
     }
 };
