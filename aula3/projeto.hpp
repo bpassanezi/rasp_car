@@ -179,6 +179,31 @@ class SERVER {
         st.resize(tamanho);
         receiveBytes(st.size(), (BYTE*)st.data());
     }
+
+    void sendImg(const Mat_<COR>& img) {
+        if (!img.isContinuous()) erro("sendImg Error: img.isContinuous() false");
+        // envia numero de linhas da imagem
+        sendUint(img.rows);
+        // envia numero de colunas da imagem
+        sendUint(img.cols);
+        // envia conteudo da imagem
+        sendBytes(3*img.total(),img.data);
+    }
+
+    void receiveImg(Mat_<COR>& img) {
+        uint32_t nl, nc;
+        
+        // recebe o numero de linhas da imagem
+        receiveUint(nl);
+        // recebe o numero de colunas da imagem
+        receiveUint(nc);
+
+        // cria uma imagem com (nc, nl)
+        // Mat_<COR> img(nl, nc);
+        img.create(nl,nc);
+        // recebe os dados da imagem
+        receiveBytes(3*img.total(), img.data);
+    }
 };
 
 
@@ -291,5 +316,30 @@ class CLIENT {
 
         st.resize(tamanho);
         receiveBytes(st.size(), (BYTE*)st.data());
+    }
+
+    void sendImg(const Mat_<COR>& img) {
+        if (!img.isContinuous()) erro("sendImg Error: img.isContinuous() false");
+        // envia numero de linhas da imagem
+        sendUint(img.rows);
+        // envia numero de colunas da imagem
+        sendUint(img.cols);
+        // envia conteudo da imagem
+        sendBytes(3*img.total(),img.data);
+    }
+
+    void receiveImg(Mat_<COR>& img) {
+        uint32_t nl, nc;
+        
+        // recebe o numero de linhas da imagem
+        receiveUint(nl);
+        // recebe o numero de colunas da imagem
+        receiveUint(nc);
+
+        // cria uma imagem com (nc, nl)
+        // Mat_<COR> img(nl, nc);
+        img.create(nl,nc);
+        // recebe os dados da imagem
+        receiveBytes(3*img.total(), img.data);
     }
 };
